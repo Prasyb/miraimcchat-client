@@ -7,7 +7,6 @@ import io.netty.handler.codec.http.HttpClientCodec;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 
 public class WebSocketChannelInitializer extends ChannelInitializer<SocketChannel> {
-
     @Override
     protected void initChannel(SocketChannel channel) throws Exception {
         ChannelPipeline pipeline = channel.pipeline();

@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import net.minecraftforge.event.ServerChatEvent;
 import net.prasyb.miraimcchat.MiraiMcChat;
+import net.prasyb.miraimcchat.ModConfig;
+import net.prasyb.miraimcchat.event.TickEventHandler;
 import net.prasyb.miraimcchat.network.ClientMessage;
 import net.prasyb.miraimcchat.network.ClientPacket;
 import net.prasyb.miraimcchat.network.ServerMessage;
@@ -21,10 +23,10 @@ public class MessageService {
     public static void sendMessage(ServerChatEvent event) {
         ClientMessage clientMessage = new ClientMessage();
         clientMessage.setText(event.getMessage());
-        clientMessage.setSender(event.getPlayer().getName());
+        clientMessage.setSender(event.getPlayer().getName().getString());
         ClientPacket clientPacket = new ClientPacket();
         clientPacket.setMessage(clientMessage);
-        clientPacket.setKey(MiraiMcChat.INSTANCE.getClientConfig().getKey());
+        clientPacket.setKey(ModConfig.KEY.get());
         sendToAll(new TextWebSocketFrame(new Gson().toJson(clientPacket)));
     }
     /**
@@ -44,10 +46,10 @@ public class MessageService {
             mcName = Objects.requireNonNull(serverMessage.getSenderMcName());
             name = Objects.requireNonNull(serverMessage.getSenderQQName());
         } catch (NullPointerException e) {
-            MiraiMcChat.INSTANCE.getLogger().error("接收到非法包", e);
+            MiraiMcChat.LOGGER.error("接收到非法包", e);
             return;
         }
         String toSend = String.format("§b[§l%s§r§b]§a<%s/%s>§f %s", source, name, mcName, text);
-        MiraiMcChat.INSTANCE.getTickEventHandler().getToSendQueue().add(toSend);
+        TickEventHandler.getToSendQueue().add(toSend);
     }
 }

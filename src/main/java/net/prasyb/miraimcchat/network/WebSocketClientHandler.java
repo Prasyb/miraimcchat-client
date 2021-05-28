@@ -12,12 +12,11 @@ import net.prasyb.miraimcchat.MiraiMcChat;
 import net.prasyb.miraimcchat.service.MessageService;
 import org.apache.logging.log4j.Logger;
 
-import java.lang.reflect.GenericSignatureFormatError;
 
 public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> {
     private WebSocketClientHandshaker handshaker = null;
     private ChannelPromise handshakeFuture = null;
-    private final Logger logger = MiraiMcChat.INSTANCE.getLogger();
+    private final Logger logger = MiraiMcChat.LOGGER;
 
     public void handlerAdded(ChannelHandlerContext ctx) {
         this.handshakeFuture = ctx.newPromise();

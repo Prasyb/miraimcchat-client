@@ -1,74 +1,62 @@
 package net.prasyb.miraimcchat.command;
 
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.ArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommand;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentString;
-import net.prasyb.miraimcchat.MiraiMcChat;
-import net.prasyb.miraimcchat.registry.ConfigRegistry;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
+import net.minecraft.util.text.StringTextComponent;
+import net.prasyb.miraimcchat.ModConfig;
 import net.prasyb.miraimcchat.service.ClientThreadService;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ConnectCommand extends BaseCommand implements ICommand {
-    public static final String name = "chatconnect";
-
-    public ConnectCommand() {
-        super(name, true);
-        this.setUsernameIndex(0);
+public class ConnectCommand {
+    public static ArgumentBuilder<CommandSource, ?> register() {
+        return Commands.literal("connect")
+                .then(Commands.argument("arguments", StringArgumentType.greedyString())
+                        .executes(ConnectCommand::execute));
     }
-
-    @Override
-    public String getUsage(ICommandSender commandSender) {
-        return "/chatconnect" + " [ip:port]" + " [key]";
-    }
-
-    @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+    public static int execute(CommandContext<CommandSource> context) throws CommandException {
+        String[] args = context.getInput().split("\\s+");
         switch(args.length) {
             default: {
-                sender.sendMessage(new TextComponentString("请输入合法参数"));
-                return;
+                context.getSource().sendFeedback(new StringTextComponent("参数不合法"), true);
+                return 0;
             }
-            case 2: {
+            case 4: {
                 Pattern pattern = Pattern.compile("(\\d+\\.\\d+\\.\\d+\\.\\d+):(\\d+)");
-                Matcher matcher = pattern.matcher(args[0]);
+                Matcher matcher = pattern.matcher(args[2]);
                 if (matcher.find()) {
-                    ConfigRegistry.getConfig().get("connection", "host", "127.0.0.1")
-                            .set(matcher.group(1));
-                    ConfigRegistry.getConfig().get("connection", "port", 0)
-                            .set(Integer.parseInt(matcher.group(2)));
-                    ConfigRegistry.getConfig().get("connection", "key", "")
-                            .set(args[1]);
-                    ConfigRegistry.getConfig().save();
-                    MiraiMcChat.INSTANCE.getClientConfig().syncConfig(ConfigRegistry.getConfig());
-                    sender.sendMessage(new TextComponentString("已保存，正在尝试重新建立连接"));
+                    ModConfig.HOST.set(matcher.group(1));
+                    ModConfig.PORT.set(Integer.parseInt(matcher.group(2)));
+                    ModConfig.KEY.set(args[3]);
+                    context.getSource().sendFeedback(new StringTextComponent("已保存，正在尝试重新建立连接"), true);
                     ClientThreadService.runWebSocketClient();
                 } else {
-                    sender.sendMessage(new TextComponentString("格式错误"));
+                    context.getSource().sendFeedback(new StringTextComponent("格式错误"), true);
                 }
-                return;
+                return 0;
             }
-            case 1: {
+            case 3: {
                 Pattern pattern = Pattern.compile("(\\d+\\.\\d+\\.\\d+\\.\\d+):(\\d+)");
-                Matcher matcher = pattern.matcher(args[0]);
+                Matcher matcher = pattern.matcher(args[2]);
                 if(matcher.find()) {
-                    ConfigRegistry.getConfig().get("connection", "host", "127.0.0.1")
-                            .set(matcher.group(1));
-                    ConfigRegistry.getConfig().get("connection", "port", 0)
-                            .set(Integer.parseInt(matcher.group(2)));
-                    ConfigRegistry.getConfig().save();
-                    MiraiMcChat.INSTANCE.getClientConfig().syncConfig(ConfigRegistry.getConfig());
-                    sender.sendMessage(new TextComponentString("已保存，正在尝试重新建立连接"));
+                    ModConfig.HOST.set(matcher.group(1));
+                    ModConfig.PORT.set(Integer.parseInt(matcher.group(2)));
+                    context.getSource().sendFeedback(new StringTextComponent("已保存，正在尝试重新建立连接"), true);
                     ClientThreadService.runWebSocketClient();
+                } else {
+                    context.getSource().sendFeedback(new StringTextComponent("格式错误"), true);
                 }
             }
-            case 0: {
-                sender.sendMessage(new TextComponentString("尝试建立连接"));
+            case 2: {
+                context.getSource().sendFeedback(new StringTextComponent("尝试建立连接"), true);
                 ClientThreadService.runWebSocketClient();
             }
         }
+        return 0;
     }
 }

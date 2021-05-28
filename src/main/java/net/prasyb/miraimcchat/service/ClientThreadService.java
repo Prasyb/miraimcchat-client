@@ -1,29 +1,30 @@
 package net.prasyb.miraimcchat.service;
 
-import net.prasyb.miraimcchat.MiraiMcChat;
+import net.prasyb.miraimcchat.ModConfig;
 import net.prasyb.miraimcchat.network.WebSocketClient;
 
 public class ClientThreadService {
+    public static WebSocketClient client;
     public static void runWebSocketClient() {
-        if (MiraiMcChat.INSTANCE.getClientThread() != null) {
-            MiraiMcChat.INSTANCE.getClientThread().interrupt();
+        if (client != null) {
+            client.interrupt();
         }
-        MiraiMcChat.INSTANCE.setClientThread(new WebSocketClient(
-                MiraiMcChat.INSTANCE.getClientConfig().getHost(),
-                MiraiMcChat.INSTANCE.getClientConfig().getPort(),
-                MiraiMcChat.INSTANCE.getClientConfig().getKey()));
-        MiraiMcChat.INSTANCE.getClientThread().start();
+        client = new WebSocketClient(
+                ModConfig.HOST.get(),
+                ModConfig.PORT.get(),
+                ModConfig.KEY.get());
+        client.start();
     }
     /**
      * @return {@code true}: 已存在客户端; {@code false}: 不存在客户端
      * */
     public static boolean stopWebSocketClient() {
         boolean isStopSuccessfully = false;
-        if (MiraiMcChat.INSTANCE.getClientThread() != null) {
-            MiraiMcChat.INSTANCE.getClientThread().interrupt();
+        if (client != null) {
+            client.interrupt();
             isStopSuccessfully = true;
         }
-        MiraiMcChat.INSTANCE.setClientThread(null);
+        client = null;
         return isStopSuccessfully;
     }
 }

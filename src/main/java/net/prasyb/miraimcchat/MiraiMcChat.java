@@ -1,89 +1,42 @@
 package net.prasyb.miraimcchat;
 
-
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.Mod;
-import net.prasyb.miraimcchat.config.WebSocketClientConfig;
-import net.prasyb.miraimcchat.event.ChatEventHandler;
-import net.prasyb.miraimcchat.event.TickEventHandler;
-import net.prasyb.miraimcchat.event.WorldEventHandler;
-import net.prasyb.miraimcchat.network.WebSocketClient;
-import net.prasyb.miraimcchat.registry.ConfigRegistry;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLPaths;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-@Mod(
-        modid = MiraiMcChat.MOD_ID,
-        name = MiraiMcChat.MOD_NAME,
-        version = MiraiMcChat.VERSION,
-        acceptedMinecraftVersions = "[1.12,1.13)"
-)
+@Mod("miraimcchat-client")
 public class MiraiMcChat {
 
-    public static final String MOD_ID = "miraimcchatclient";
-    public static final String MOD_NAME = "MiraiMcChat-client";
-    public static final String VERSION = "0.0.1";
+    public static final String MOD_ID = "miraimcchat-client";
+    public static final Logger LOGGER = LogManager.getLogger();
 
-    private static Logger logger;
-    private WebSocketClient clientThread;
-    private WebSocketClientConfig clientConfig;
-    private TickEventHandler tickEventHandler;
-
-    @Mod.Instance(MOD_ID)
-    public static MiraiMcChat INSTANCE;
-
-    public TickEventHandler getTickEventHandler() { return tickEventHandler; }
-
-    public Logger getLogger() {
-        return logger;
+    public MiraiMcChat() {
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
-    public WebSocketClient getClientThread() {
-        return clientThread;
+    private void setup(final FMLCommonSetupEvent event) {
+        ModConfig.setup(FMLPaths.CONFIGDIR.get().resolve(MOD_ID + ".toml"));
     }
 
-    public WebSocketClientConfig getClientConfig() {
-        return clientConfig;
+    private void doClientStuff(final FMLClientSetupEvent event) {
     }
 
-    public void setClientThread(WebSocketClient clientThread) {
-        this.clientThread = clientThread;
+    private void enqueueIMC(final InterModEnqueueEvent event) {
     }
 
-
-    @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent event) {
-        logger = event.getModLog();
-        tickEventHandler = new TickEventHandler();
-        ConfigRegistry.init(new Configuration(event.getSuggestedConfigurationFile()));
-        clientConfig = new WebSocketClientConfig();
-        ConfigRegistry.register(clientConfig);
-        ConfigRegistry.syncAllConfig();
-        MinecraftForge.EVENT_BUS.register(new ChatEventHandler());
-        MinecraftForge.EVENT_BUS.register(tickEventHandler);
-    }
-
-
-    @Mod.EventHandler
-    public void init(FMLInitializationEvent event) {
-
-    }
-
-
-    @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent event) {
-
-    }
-
-    @Mod.EventHandler
-    public void onEntranceEvent(FMLServerStartingEvent event) {
-        WorldEventHandler.onEntranceEvent(event);
-    }
-
-    @Mod.EventHandler
-    public void onExitEvent(FMLServerStoppingEvent event) {
-        WorldEventHandler.onExitEvent(event);
+    private void processIMC(final InterModProcessEvent event) {
     }
 }
+

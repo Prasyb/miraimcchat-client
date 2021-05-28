@@ -22,7 +22,7 @@ import java.net.URISyntaxException;
 public class WebSocketClient extends Thread {
     private URI wsURI;
     private String key;
-    private final Logger logger = MiraiMcChat.INSTANCE.getLogger();
+    private final Logger logger = MiraiMcChat.LOGGER;
 
     public String getKey() {
         return key;
@@ -55,7 +55,7 @@ public class WebSocketClient extends Thread {
                     //进行握手
                     Channel channel = channelFuture.channel();
                     HttpHeaders httpHeaders = new DefaultHttpHeaders();
-                    WebSocketClientHandler handler = (WebSocketClientHandler)channel.pipeline().get("handler");
+                    WebSocketClientHandler handler = (WebSocketClientHandler) channel.pipeline().get("handler");
                     WebSocketClientHandshaker handshaker = WebSocketClientHandshakerFactory.newHandshaker(wsURI,
                             WebSocketVersion.V13, null, true, httpHeaders);
                     handler.setHandshaker(handshaker);

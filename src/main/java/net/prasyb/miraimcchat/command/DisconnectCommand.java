@@ -1,32 +1,27 @@
 package net.prasyb.miraimcchat.command;
 
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.ArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommand;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
+import net.minecraft.util.text.StringTextComponent;
 import net.prasyb.miraimcchat.service.ClientThreadService;
 
-public class DisconnectCommand extends BaseCommand implements ICommand {
-    public static final String name = "chatdisconnect";
-
-    public DisconnectCommand() {
-        super(name, true);
-        this.setUsernameIndex(0);
+public class DisconnectCommand  {
+    public static ArgumentBuilder<CommandSource, ?> register() {
+        return Commands.literal("disconnect")
+                .then(Commands.argument("arguments", StringArgumentType.greedyString())
+                        .executes(ConnectCommand::execute));
     }
-
-    @Override
-    public String getUsage(ICommandSender commandSender) {
-        return "/chatdisconnect";
-    }
-
-    @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+    public static int execute(CommandContext<CommandSource> context) throws CommandException {
         boolean isSuccess = ClientThreadService.stopWebSocketClient();
         if (isSuccess) {
-            sender.sendMessage(new TextComponentString("已断开连接"));
+            context.getSource().sendFeedback(new StringTextComponent("已断开连接"), true);
         } else {
-            sender.sendMessage(new TextComponentString("目前未连接"));
+            context.getSource().sendFeedback(new StringTextComponent("目前未连接"), true);
         }
+        return 0;
     }
 }
