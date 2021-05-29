@@ -13,5 +13,5 @@
 
 ### 2.连接服务端
 
-- 在聊天栏或控制台使用 `/chatconnect <host:port> <key>` 连接服务端，其中 key 在注册客户端时取得
+- 在聊天栏或控制台使用 `/mcchat connect <host:port> <key>` 连接服务端，其中 key 在注册客户端时取得
 
