@@ -11,8 +11,8 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle'
 
 group = 'net.prasyb'
-version = '0.1.0'
-archivesBaseName = 'MiraiMcChat'
+version = '0.1.1'
+archivesBaseName = 'miraimcchat-1.16.5'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(8) // Mojang ships Java 8 to end users, so your mod should target Java 8.
 

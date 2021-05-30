@@ -9,6 +9,8 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketClientHandshaker;
 import net.prasyb.miraimcchat.MiraiMcChat;
+import net.prasyb.miraimcchat.ModConfig;
+import net.prasyb.miraimcchat.service.ClientThreadService;
 import net.prasyb.miraimcchat.service.MessageService;
 import org.apache.logging.log4j.Logger;
 
@@ -36,8 +38,10 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
 
         //处理文本请求
         if (msg instanceof TextWebSocketFrame) {
-            TextWebSocketFrame textFrame = (TextWebSocketFrame) msg;
-            MessageService.receiveMessage(new Gson().fromJson(textFrame.text(), ServerPacket.class));
+            if (ModConfig.RECEIVE_ENABLED.get()) {
+                TextWebSocketFrame textFrame = (TextWebSocketFrame) msg;
+                MessageService.receiveMessage(new Gson().fromJson(textFrame.text(), ServerPacket.class));
+            }
         }
     }
     @Override
@@ -51,9 +55,10 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         cause.printStackTrace();
         ctx.channel().close();
+        ClientThreadService.stopWebSocketClient();
     }
 
     public void setHandshaker(WebSocketClientHandshaker handshaker) {

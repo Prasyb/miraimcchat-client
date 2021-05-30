@@ -7,13 +7,12 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.util.text.StringTextComponent;
+import net.prasyb.miraimcchat.ModConfig;
 import net.prasyb.miraimcchat.service.ClientThreadService;
 
 public class DisconnectCommand  {
     public static ArgumentBuilder<CommandSource, ?> register() {
-        return Commands.literal("disconnect")
-                .then(Commands.argument("arguments", StringArgumentType.greedyString())
-                        .executes(ConnectCommand::execute));
+        return Commands.literal("disconnect").executes(DisconnectCommand::execute);
     }
     public static int execute(CommandContext<CommandSource> context) throws CommandException {
         boolean isSuccess = ClientThreadService.stopWebSocketClient();
@@ -22,6 +21,7 @@ public class DisconnectCommand  {
         } else {
             context.getSource().sendFeedback(new StringTextComponent("目前未连接"), true);
         }
+        ModConfig.IS_ENABLED.set(false);
         return 0;
     }
 }

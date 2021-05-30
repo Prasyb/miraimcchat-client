@@ -13,12 +13,16 @@ public class ModConfig {
     public static ForgeConfigSpec.IntValue PORT;
     public static ForgeConfigSpec.BooleanValue IS_ENABLED;
     public static ForgeConfigSpec.ConfigValue<String> KEY;
+    public static ForgeConfigSpec.BooleanValue RECEIVE_ENABLED;
+    public static ForgeConfigSpec.BooleanValue SEND_ENABLED;
     static {
         CFG.comment("Connection Settings").push("connection");
         HOST = CFG.comment("Server Host").define("host", "127.0.0.1");
         PORT = CFG.comment("Server Port").defineInRange("port", 0,0,65536);
         IS_ENABLED = CFG.comment("Enable Client").define("enabled", true);
         KEY = CFG.comment("Access Key").define("key", "");
+        RECEIVE_ENABLED = CFG.comment("Enable Receiving Message").define("receive_enabled", true);
+        SEND_ENABLED = CFG.comment("Enable Sending Message").define("send_enabled", true);
         CFG.pop();
         COMMON_CONFIG = CFG.build();
     }

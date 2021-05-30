@@ -6,8 +6,7 @@ import net.minecraft.command.Commands;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.prasyb.miraimcchat.command.ConnectCommand;
-import net.prasyb.miraimcchat.command.DisconnectCommand;
+import net.prasyb.miraimcchat.command.*;
 
 @Mod.EventBusSubscriber
 public class CommandEventHandler {
@@ -16,8 +15,12 @@ public class CommandEventHandler {
         CommandDispatcher<CommandSource> dispatcher = event.getDispatcher();
         dispatcher.register(
                 Commands.literal("mcchat")
+                        .requires(commandSource -> commandSource.hasPermissionLevel(2))
                         .then(ConnectCommand.register())
                         .then(DisconnectCommand.register())
+                        .then(ReceiveCommand.register())
+                        .then(SendCommand.register())
+                        .then(StatusCommand.register())
         );
     }
 }

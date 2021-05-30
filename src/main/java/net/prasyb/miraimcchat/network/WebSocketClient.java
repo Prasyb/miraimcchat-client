@@ -14,6 +14,7 @@ import io.netty.handler.codec.http.websocketx.WebSocketClientHandshakerFactory;
 import io.netty.handler.codec.http.websocketx.WebSocketVersion;
 import io.netty.util.concurrent.GenericFutureListener;
 import net.prasyb.miraimcchat.MiraiMcChat;
+import net.prasyb.miraimcchat.service.ClientThreadService;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URI;
@@ -35,6 +36,10 @@ public class WebSocketClient extends Thread {
             logger.error(e.getMessage());
         }
         this.key = key;
+        setUncaughtExceptionHandler((thread, throwable) -> {
+            logger.warn("连接出错，将结束客户端线程:", throwable);
+            ClientThreadService.stopWebSocketClient();
+        });
     }
     @Override
     public void run(){
@@ -64,8 +69,7 @@ public class WebSocketClient extends Thread {
                 }
             });
             cf.channel().closeFuture().sync();
-        }
-        catch (InterruptedException e){
+        } catch (InterruptedException e){
             logger.info("webSocketClient线程中断");
         }
         finally {

@@ -1,11 +1,13 @@
 package net.prasyb.miraimcchat.service;
 
+import net.prasyb.miraimcchat.MiraiMcChat;
 import net.prasyb.miraimcchat.ModConfig;
 import net.prasyb.miraimcchat.network.WebSocketClient;
 
 public class ClientThreadService {
     public static WebSocketClient client;
     public static void runWebSocketClient() {
+        int delay = 0;
         if (client != null) {
             client.interrupt();
         }

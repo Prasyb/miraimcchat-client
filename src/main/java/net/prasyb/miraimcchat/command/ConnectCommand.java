@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 public class ConnectCommand {
     public static ArgumentBuilder<CommandSource, ?> register() {
         return Commands.literal("connect")
+                .executes(ConnectCommand::execute)
                 .then(Commands.argument("arguments", StringArgumentType.greedyString())
                         .executes(ConnectCommand::execute));
     }
@@ -24,7 +25,7 @@ public class ConnectCommand {
         switch(args.length) {
             default: {
                 context.getSource().sendFeedback(new StringTextComponent("参数不合法"), true);
-                return 0;
+                break;
             }
             case 4: {
                 Pattern pattern = Pattern.compile("(\\d+\\.\\d+\\.\\d+\\.\\d+):(\\d+)");
@@ -33,12 +34,12 @@ public class ConnectCommand {
                     ModConfig.HOST.set(matcher.group(1));
                     ModConfig.PORT.set(Integer.parseInt(matcher.group(2)));
                     ModConfig.KEY.set(args[3]);
-                    context.getSource().sendFeedback(new StringTextComponent("已保存，正在尝试重新建立连接"), true);
+                    context.getSource().sendFeedback(new StringTextComponent("已保存，正在尝试建立连接"), true);
                     ClientThreadService.runWebSocketClient();
                 } else {
                     context.getSource().sendFeedback(new StringTextComponent("格式错误"), true);
                 }
-                return 0;
+                break;
             }
             case 3: {
                 Pattern pattern = Pattern.compile("(\\d+\\.\\d+\\.\\d+\\.\\d+):(\\d+)");
@@ -46,17 +47,20 @@ public class ConnectCommand {
                 if(matcher.find()) {
                     ModConfig.HOST.set(matcher.group(1));
                     ModConfig.PORT.set(Integer.parseInt(matcher.group(2)));
-                    context.getSource().sendFeedback(new StringTextComponent("已保存，正在尝试重新建立连接"), true);
+                    context.getSource().sendFeedback(new StringTextComponent("已保存，正在尝试建立连接"), true);
                     ClientThreadService.runWebSocketClient();
                 } else {
                     context.getSource().sendFeedback(new StringTextComponent("格式错误"), true);
                 }
+                break;
             }
             case 2: {
                 context.getSource().sendFeedback(new StringTextComponent("尝试建立连接"), true);
                 ClientThreadService.runWebSocketClient();
+                break;
             }
         }
+        ModConfig.IS_ENABLED.set(true);
         return 0;
     }
 }
