@@ -1,15 +1,15 @@
 # MiraiMcChat-client
 ![Github](https://img.shields.io/badge/Author-Prasyb-blue)  
 
-配合 [MiraiMcChat]() 的Mod，提供QQ群与Minecraft的聊天同步功能
+配合 [MiraiMcChat](https://github.com/Prasyb/miraimcchat) 的Mod，提供QQ群与Minecraft的聊天同步功能
 
-本Mod为客户端，需配合mirai-console插件 [MiraiMcChat]() 使用
+本Mod为客户端，需配合mirai-console插件 [MiraiMcChat](https://github.com/Prasyb/miraimcchat) 使用
 
 ## 使用方法
 
 ### 1.构建服务端
 
-- **[MiraiMcChat]()**
+- 见 **[MiraiMcChat](https://github.com/Prasyb/miraimcchat)**
 
 ### 2.连接服务端
 
